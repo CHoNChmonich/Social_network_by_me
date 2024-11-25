@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Запросы в друзья</h2>
+
+<h3>Входящие запросы:</h3>
+<ul>
+    {% for request in incoming_requests %}
+    <li>
+        {{ request.from_user.username }}
+        <a href="{% url 'users:accept_friend_request' request.id %}">Принять</a> |
+        <a href="{% url 'users:decline_friend_request' request.id %}">Отклонить</a>
+    </li>
+    {% empty %}
+    <li>Нет входящих запросов.</li>
+    {% endfor %}
+</ul>
+
+<h3>Исходящие запросы:</h3>
+<ul>
+    {% for request in outgoing_requests %}
+    <li>{{ request.to_user.username }} (Ожидает подтверждения)</li>
+    {% empty %}
+    <li>Нет исходящих запросов.</li>
+    {% endfor %}
+</ul>
+<p><a href="{% url 'users:profile' %}" class="btn btn-secondary">Назад к профилю</a></p>
+{% endblock %}

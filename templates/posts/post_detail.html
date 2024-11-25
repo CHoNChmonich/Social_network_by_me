@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card">
+        <!-- Пост -->
+        <div class="card-body">
+            <!-- Автор и дата -->
+            <h5 class="card-title">Post by {{ post.author.username }}</h5>
+            <p class="card-text text-muted">
+                Created at: {{ post.created_at|date:"F d, Y H:i" }}
+            </p>
+
+            <!-- Контент -->
+            <p>{{ post.content }}</p>
+
+            <!-- Информация о репосте -->
+            {% if post.is_repost %}
+                <p class="text-warning">This is a repost.</p>
+                {% if post.original_post %}
+                    <p>Original post by
+                        <a href="{% url 'posts: post_detail' post.original_post.id %}">
+                            {{ post.original_post.author.username }}
+                        </a>.
+                    </p>
+                {% else %}
+                    <p class="text-danger">Original post is no longer available.</p>
+                {% endif %}
+            {% endif %}
+
+            <!-- Количество лайков -->
+            <p>Likes: {{ post.like_count }}</p>
+
+            <!-- Количество репостов -->
+            <p>Reposts: {{ post.repost_count }}</p>
+
+            <!-- Лайк/Анлайк -->
+            <form action="{% url 'posts:post_like_toggle' post.id %}" method="post">
+                {% csrf_token %}
+                {% if user.is_authenticated %}
+                    {% if post.is_liked_by_user(user) %}
+                        <button type="submit" class="btn btn-danger">Unlike</button>
+                    {% else %}
+                        <button type="submit" class="btn btn-primary">Like</button>
+                    {% endif %}
+                {% else %}
+                    <p><a href="{% url 'users:login' %}">Login</a> to like this post.</p>
+                {% endif %}
+            </form>
+        </div>
+    </div>
+
+    <!-- Репосты -->
+    {% if post.reposts.exists %}
+        <div class="mt-4">
+            <h4>Reposts:</h4>
+            <ul class="list-group">
+                {% for repost in post.reposts.all %}
+                    <li class="list-group-item">
+                        Reposted by
+                            {{ repost.author.username }} {{ repost.created_at|date:"F d, Y H:i" }}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

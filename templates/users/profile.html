@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5">
+    <h1 class="text-center">Профиль пользователя</h1>
+    <div class="card mx-auto" style="max-width: 600px;">
+        <div class="card-body text-center">
+            <!-- Отображение аватарки пользователя -->
+            {% if avatar %}
+                <img src="{{ avatar.image.url }}" alt="Аватарка" class="img-fluid rounded-circle mb-3" style="max-width: 150px;">
+            {% else %}
+                <img src="https://via.placeholder.com/150" alt="Аватарка" class="img-fluid rounded-circle mb-3">
+            {% endif %}
+            <a href="{% url 'users:upload_avatar' %}" class="btn btn-secondary">Загрузить аватарку</a>
+            <h2>Загрузить фотографию</h2>
+                <form method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <button type="submit" class="btn btn-primary">Загрузить</button>
+                </form>
+            <p><a href="{% url 'users:photos' user.id %}" class="btn btn-primary btn-lg">Просмотреть фотографии</a></p>
+            <p><a href="{% url 'users:friend_requests' %}" class="btn btn-primary btn-lg">Запросы в друзья</a></p>
+            <p><a href="{% url 'users:liked_items' %}" class="btn btn-primary btn-lg">View all liked posts and photos</a></p>
+            <p><span>{{friends_count}}</span> <a href="{% url 'users:friend_list' %}" class="btn btn-primary btn-lg">Друзья</a></p>
+            <p><span>{{followers_count}}</span> <a href="{% url 'users:followers_list' user.id %}" class="btn btn-primary btn-lg">Подписчики</a></p>
+            <p><span>{{followings_count}}</span> <a href="{% url 'users:followings_list' user.id %}" class="btn btn-primary btn-lg">Подписки</a></p>
+            <h4>{{ user.first_name }} {{ user.last_name }}</h4>
+            <p><strong>Логин:</strong> {{ user.username }}</p>
+            <p><strong>Электронная почта:</strong> {{ user.email }}</p>
+            <p><strong>Номер телефона:</strong> {{ user.phone_number }}</p>
+            <p><strong>Хобби:</strong> {{ user.about }}</p>
+            <p><strong>Дата рождения:</strong> {{ user.birth_date|date:"d.m.Y" }}</p>
+            <p><strong>Дата регистрации:</strong> {{ user.date_joined|date:"d.m.Y" }}</p>
+            <p><a href="{% url 'users:edit_profile' %}">Редактировать личные данные</a></p>
+        </div>
+    </div>
+</div>
+<h1>Посты от {{ user.first_name }} {{user.last_name}}</h1>
+<ul>
+    {% for post in user.posts.all %}
+        <li>
+            {% if post.original_post %}
+                <p><strong>Repost from {{ post.original_post.author.username }}:</strong></p>
+            {%endif%}
+                <p>{{ post.content }}</p>
+                {% if post.images.exists %}
+            <div class="post-images">
+                {% for image in post.images.all %}
+                    <img src="{{ image.image.url }}" alt="Изображение" style="max-width: 100%;">
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% if post.videos.exists %}
+            <div class="post-videos">
+                {% for video in post.videos.all %}
+                    <video controls style="max-width: 100%;">
+                        <source src="{{ video.video.url }}" type="video/mp4">
+                        Ваш браузер не поддерживает воспроизведение видео.
+                    </video>
+                {% endfor %}
+            </div>
+            {% endif %}
+            <small>{{ post.created_at }}</small>
+            <p>Репостов: {{ post.repost_count }} | Лайков: {{ post.like_count }}</p>
+            <form method="POST" action="{% url 'posts:delete_post' post.id %}">
+                {% csrf_token %}
+                <button type="submit">Удалить Запись</button>
+            </form>
+
+        </li>
+    {% endfor %}
+
+</ul>
+<a href="{% url 'users:logout' %}" class="btn btn-primary btn-lg">Выход</a>
+{% endblock %}

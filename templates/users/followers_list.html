@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Подписчики пользователя {{ profile_user.username }}</h1>
+<ul>
+    {% for request in incoming_requests %}
+    <li>
+        {{ request.from_user.username }}
+        <a href="{% url 'users:accept_friend_request' request.id %}">Принять</a> |
+        <a href="{% url 'users:decline_friend_request' request.id %}">Отклонить</a>
+    </li>
+    {% empty %}
+    <li>Нет входящих запросов.</li>
+    {% endfor %}
+</ul>
+<a href="{% url 'users:profile' %}" class="btn btn-secondary">Назад к профилю</a>
+{% endblock %}

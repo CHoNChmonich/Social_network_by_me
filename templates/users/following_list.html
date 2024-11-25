@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Подписки пользователя {{ profile_user.username }}</h1>
+<ul>
+    {% for following in followings %}
+        <li>
+            <a href="{% url 'users:another_profile' following.id %}">{{ following.username }}</a>
+        </li>
+    {% endfor %}
+</ul>
+<a href="{% url 'users:profile' %}" class="btn btn-secondary">Назад к профилю</a>
+{% endblock %}

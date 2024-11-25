@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Новости</h1>
+<div class="news-feed">
+    <p><a href="{% url 'posts:create_post' %}" class="btn btn-success">Создать пост</a></p>
+    {% for post in posts %}
+        <div class="post">
+            <p><strong>{{ post.author.username }}</strong> написал:</p>
+            {% if post.is_repost %}
+                <p>Оригинальный пост от: {{ post.original_post.author.username }}</p>
+            {% endif %}
+            <p>{{ post.content }}</p>
+            {% if post.images.exists %}
+            <div class="post-images">
+                {% for image in post.images.all %}
+                    <img src="{{ image.image.url }}" alt="Изображение" style="max-width: 100%;">
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% if post.videos.exists %}
+            <div class="post-videos">
+                {% for video in post.videos.all %}
+                    <video controls style="max-width: 100%;">
+                        <source src="{{ video.video.url }}" type="video/mp4">
+                        Ваш браузер не поддерживает воспроизведение видео.
+                    </video>
+                {% endfor %}
+            </div>
+            {% endif %}
+            <small>{{ post.created_at }}</small>
+            <p>Репостов: {{ post.repost_count }} | Лайков: {{ post.like_count }}</p>
+            <p>
+            <form action="{% url 'posts:repost' post.id %}" method="post">
+                {% csrf_token %}
+                <button type="submit">Репост</button>
+            </form>
+            <form action="{% url 'posts:toggle_post_like' post.id %}" method="post">
+                {% csrf_token %}
+                {% if post.is_liked %}
+                    <button type="submit">Убрать лайк</button>
+                {% else %}
+                    <button type="submit">Лайк</button>
+                {% endif %}
+            </form>
+            </p>
+
+        </div>
+        <hr>
+    {% empty %}
+        <p>Нет постов для отображения.</p>
+    {% endfor %}
+</div>
+{% endblock %}

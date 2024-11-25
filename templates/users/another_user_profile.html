@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="profile-container">
+    <h1>{{ user.username }}</h1>
+    <p><strong>Имя:</strong> {{ user.first_name }} {{ user.last_name }}</p>
+    <p><strong>О себе:</strong> {{ user.about }}</p>
+    <p><strong>Дата рождения:</strong> {{ user.birth_date }}</p>
+    <p><a href="{% url 'chat:create_or_redirect_chat' user.id %}" class="btn btn-primary btn-lg">Перейти в чат с {{user.first_name}}</a></p>
+
+    {% if is_friend %}
+      <p>Вы друзья с этим пользователем!</p>
+    {% else %}
+      {% if friend_request %}
+        <p>Пользователь отправил вам запрос, примите его!</p>
+      {% elif received_request %}
+        <p>Вы уже отправили запрос в друзья, ожидайте подтверждения!</p>
+      {% else %}
+        <form method="POST" action="{% url 'users:send_friend_request' user_id=user.id %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-primary">Отправить запрос в друзья</button>
+        </form>
+      {% endif %}
+    {% endif %}
+  </div>
+{% endblock %}

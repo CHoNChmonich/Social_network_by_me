@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Новости{% endblock %}
+
+{% block content %}
+    <h1>Новости</h1>
+    <div class="list-group">
+        {% for post in posts %}
+            <div class="list-group-item">
+                <h5 class="mb-1">{{ post.title }}</h5>
+                <p class="mb-1">{{ post.content }}</p>
+                <small>{{ post.created_at }}</small>
+            </div>
+        {% endfor %}
+    </div>
+{% endblock %}

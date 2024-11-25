@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Фотографии пользователя {{ profile_user.username }}</h1>
+
+<div class="photo-gallery">
+    {% if photos %}
+        {% for photo in photos %}
+            <div class="photo-item">
+                <img src="{{ photo.image.url }}" alt="Фото {{ photo.id }}" class="user-photo" style="width: 150px; height: 150px;">
+                {% if photo.description %}
+                    <p class="photo-description">{{ photo.description }}</p>
+                {% endif %}
+                <p class="photo-date">Загружено: {{ photo.uploaded_at|date:"d.m.Y H:i" }}</p>
+                 {% if photo.is_avatar %}
+                    <p><strong>Аватар</strong></p>
+                {% else %}
+                    <!-- Кнопка для установки фото в качестве аватара -->
+                    <form method="post" action="{% url 'users:set_avatar' photo.id %}">
+                        {% csrf_token %}
+                        <button type="submit">Сделать аватаром</button>
+                    </form>
+                {% endif %}
+                <div class="likes">
+            <!-- Проверка, поставил ли текущий пользователь лайк на фотографию -->
+            <form action="{% url 'users:toggle_photo_like' photo.id %}" method="post">
+                {% csrf_token %}
+                {% if photo.is_liked %}
+                    <button type="submit">Убрать лайк</button>
+                {% else %}
+                    <button type="submit">Лайк</button>
+                {% endif %}
+            </form>
+
+            <span>{{ photo.likes.count }} лайков</span>
+        </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p>У пользователя ещё нет загруженных фотографий.</p>
+    {% endif %}
+</div>
+{% endblock %}

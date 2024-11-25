@@ -1,0 +1,11 @@
+# Игнорировать папку media
+/media/
+
+# Игнорировать папки migrations
+*/migrations/
+
+# Игнорировать папку idea (например, для JetBrains IDE)
+.idea/
+
+# Игнорировать базу данных SQLite
+db.sqlite3

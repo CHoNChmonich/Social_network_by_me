@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-5 text-center">
+    <h1 class="mb-4">Добро пожаловать в нашу социальную сеть!</h1>
+    <p class="mb-5">Присоединяйтесь к нам, чтобы общаться, делиться фотографиями и находить новых друзей.</p>
+    <div class="d-flex justify-content-center gap-3">
+        <a href="{% url 'users:login' %}" class="btn btn-primary btn-lg">Вход</a>
+        <a href="{% url 'users:register' %}" class="btn btn-success btn-lg">Регистрация</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="chat-container">
+    <h2>Чат с{%for other_user in other_users%} {{other_user.first_name}} {{other_user.last_name}} |{%endfor%}</h2>
+
+    <!-- Секция для отображения сообщений -->
+    <div id="chat-box" class="chat-box">
+        {% for message in chat.messages.all %}
+            <div class="message">
+                <strong>{{ message.sender.username }}:</strong> {{ message.content }}
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Форма для ввода сообщения -->
+    <div class="chat-input">
+        <input id="message-input" type="text" placeholder="Введите сообщение" />
+        <button id="send-button">Отправить</button>
+    </div>
+</div>
+
+<style>
+    .chat-container {
+        width: 50%;
+        margin: 0 auto;
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        background-color: #f9f9f9;
+    }
+    .chat-box {
+        height: 300px;
+        overflow-y: auto;
+        border: 1px solid #ccc;
+        padding: 10px;
+        margin-bottom: 10px;
+        background-color: #fff;
+    }
+    .chat-input {
+        display: flex;
+        gap: 10px;
+    }
+    .message {
+        margin-bottom: 5px;
+    }
+</style>
+
+<script>
+    const chatId = {{ chat.id }};
+    const wsUrl = `ws://${window.location.host}/ws/chat/chats/${chatId}/`;
+
+    const chatSocket = new WebSocket(wsUrl);
+    chatSocket.onmessage = function(e) {
+        const data = JSON.parse(e.data);
+        const chatBox = document.getElementById('chat-box');
+        const newMessage = `<div class="message">
+            <strong>${data.sender}:</strong> ${data.message}
+        </div>`;
+        chatBox.innerHTML += newMessage;
+        chatBox.scrollTop = chatBox.scrollHeight;
+    };
+
+    chatSocket.onerror = function(e) {
+        console.error('WebSocket error:', e);
+    };
+
+    document.getElementById('send-button').onclick = function(e) {
+        const messageInput = document.getElementById('message-input');
+        const message = messageInput.value.trim();
+
+        if (message) {
+            chatSocket.send(JSON.stringify({
+                'message': message,
+                'sender': '{{ request.user.username }}'
+            }));
+            messageInput.value = '';
+        }
+    };
+    chatSocket.onclose = function(e) {
+        console.log('WebSocket закрыт:', e);
+    };
+</script>
+{% endblock %}

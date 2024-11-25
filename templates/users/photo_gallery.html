@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block title %}Все фотографии{% endblock %}
+
+{% block content %}
+    <h1>Все фотографии</h1>
+    {% for photo in photos %}
+        <div class="card mb-3">
+            <div class="card-body">
+                <img src="{{ photo.image.url }}" class="card-img-top" alt="Фото">
+                <p class="card-text">{{ photo.description }}</p>
+                <p class="card-text"><small class="text-muted">{{ photo.uploaded_at }}</small></p>
+
+                {% if request.user in photo.likes.values_list('user', flat=True) %}
+                    <a href="{% url 'toggle_like' photo.id 'photo' %}" class="btn btn-danger">Удалить лайк</a>
+                {% else %}
+                    <a href="{% url 'toggle_like' photo.id 'photo' %}" class="btn btn-primary">Поставить лайк</a>
+                {% endif %}
+            </div>
+        </div>
+    {% endfor %}
+{% endblock %}

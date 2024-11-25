@@ -1,0 +1,15 @@
+<!-- users/liked_items.html -->
+{% extends 'base.html' %}
+{% block content %}
+<h1>Liked Posts and Photos</h1>
+
+{% for item in liked_items %}
+    {% if item.item_type == 'Post' %}
+        <p>Liked post: <a href="{% url 'posts:post_detail' item.like.post.id %}">{{ item.like.post.content }}</a> on {{ item.like.created_at }}</p>
+    {% elif item.item_type == 'Photo' %}
+        <p>Liked photo: <img src="{{ item.likes.photo.image.url }}" alt="Фото {{ item.likes.photo.id }}" class="user-photo" style="width: 150px; height: 150px;"> on {{ item.like.created_at }}</p>
+    {% endif %}
+{% empty %}
+    <p>No liked posts or photos.</p>
+{% endfor %}
+{% endblock %}

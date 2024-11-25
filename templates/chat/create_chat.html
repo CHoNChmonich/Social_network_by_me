@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Create Chat</h2>
+    <form method="post">
+        {% csrf_token %}
+        <label for="participants">Add participants:</label>
+        <select name="participants" id="participants" class="form-control" multiple>
+            {% for friend in friends %}
+            <option value="{{ friend.id }}">{{ friend.username }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-primary mt-3">Create</button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2>Your Chats</h2>
+    <ul class="list-group">
+        {% for chat in chats %}
+        <li class="list-group-item">
+            <a href="{% url 'chat:chat_detail' chat.id %}">
+                {{ chat.name|default:"Chat with " }}{% for participant in chat.participants.all %}
+                {% if participant != user %}{{ participant.username }}, {% endif %}
+                {% endfor %}
+            </a>
+            <small class="text-muted">Last message: {{ chat.last_message.created_at|date:"F d, Y H:i" }}</small>
+        </li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'chat:create_chat' %}" class="btn btn-primary mt-3">Create Chat</a>
+</div>
+{% endblock %}

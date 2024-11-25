@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="text-center">{{ title }}</h1>
+    <form method="get" action="" class="mb-4">
+        <div class="input-group">
+            <input
+                type="text"
+                name="q"
+                class="form-control"
+                placeholder="Введите имя или фамилию для поиска..."
+                value="#">
+            <button class="btn btn-primary" type="submit">Искать</button>
+        </div>
+    </form>
+    <div class="row">
+        {% if users %}
+            {% for user in users %}
+                <div class="col-md-6 col-lg-4 mb-3">
+                    <div class="card">
+                        <img
+                            src="#"
+                            class="card-img-top"
+                            alt="{{ user.get_full_name }}">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ user.get_full_name }}</h5>
+                            <p class="card-text">
+                                <strong>Количество друзей:</strong>
+                                {{ user.friends.count }}
+                            </p>
+                            <a href="{% url 'users:another_profile' user_id=user.id %}" class="btn btn-primary">
+                                Посмотреть профиль
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p class="text-center">Пользователи не найдены.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
