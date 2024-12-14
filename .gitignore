@@ -6,6 +6,6 @@
 
 # Игнорировать папку idea (например, для JetBrains IDE)
 .idea/
-
+__pycache__/
 # Игнорировать базу данных SQLite
 db.sqlite3

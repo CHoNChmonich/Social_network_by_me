@@ -1,10 +1,8 @@
 from django.db import models
 from users.models import User, Photo
-from django.contrib.contenttypes.fields import GenericForeignKey
-from django.contrib.contenttypes.models import ContentType
 from django.utils import timezone
 
-# Create your models here.
+
 class Post(models.Model):
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -38,6 +36,7 @@ class PostImage(models.Model):
     def __str__(self):
         return f"Изображение для поста {self.post.id}"
 
+
 class PostVideo(models.Model):
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name="videos")
     video = models.FileField(upload_to="post_videos/")
@@ -45,11 +44,11 @@ class PostVideo(models.Model):
     def __str__(self):
         return f"Видео для поста {self.post.id}"
 
+
 class PostLike(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='post_likes')
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='likes')
     created_at = models.DateTimeField(default=timezone.now)
-
 
     def __str__(self):
         return f"{self.user.username} liked {self.post}"

@@ -1,13 +1,12 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
-from django.contrib.contenttypes.models import ContentType
-from posts.models import Post, PostImage, PostVideo ,PostLike
-from users.models import Photo
+from django.shortcuts import get_object_or_404, redirect
 from django.db import models
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+
 from .models import Post
+from posts.models import PostImage, PostVideo, PostLike
 from posts.forms import PostForm
+
 
 @login_required
 def create_post_view(request):
@@ -27,10 +26,13 @@ def create_post_view(request):
     else:
         form = PostForm()
     return render(request, 'posts/create_post.html', {'form': form})
+
+
 @login_required
 def post_detail(request, post_id):
     post = get_object_or_404(Post, id=post_id)
     return render(request, 'posts/post_detail.html', {'post': post})
+
 
 @login_required
 def news_feed_view(request):
@@ -49,6 +51,7 @@ def news_feed_view(request):
     }
     return render(request, 'posts/news_feed.html', context)
 
+
 @login_required
 def repost_view(request, post_id):
     original_post = Post.objects.get(id=post_id)
@@ -60,11 +63,11 @@ def repost_view(request, post_id):
     )
     # Копируем изображения
     for image in original_post.images.all():
-        repost_image = PostImage.objects.create(image=image.image, post = repost)  # Создаем новый объект изображения
+        repost_image = PostImage.objects.create(image=image.image, post=repost)  # Создаем новый объект изображения
 
     # Копируем видео
     for video in original_post.videos.all():
-        repost_video = PostVideo.objects.create(video=video.video, post = repost)  # Создаем новый объект видео
+        repost_video = PostVideo.objects.create(video=video.video, post=repost)  # Создаем новый объект видео
     return redirect('users:profile')
 
 
@@ -78,7 +81,7 @@ def delete_post_view(request, post_id):
     # Перенаправляем обратно на страницу профиля или ленту новостей
     return redirect('users:profile')
 
-# Представление для лайков на постах
+
 @login_required
 def toggle_post_like(request, post_id):
     post = get_object_or_404(Post, id=post_id)

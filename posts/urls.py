@@ -1,10 +1,10 @@
-from django.urls import path, include
+from django.urls import path
+
 from posts import views
 
 app_name = 'posts'
 
 urlpatterns = [
-
     path('news/', views.news_feed_view, name='news_feed'),
     path('post/create/', views.create_post_view, name='create_post'),
     path('posts/delete/<int:post_id>/', views.delete_post_view, name='delete_post'),

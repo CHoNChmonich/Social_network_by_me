@@ -1,8 +1,9 @@
 from django.utils import timezone
-
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+
 from users.utils import get_avatar_upload_path
+
 
 class User(AbstractUser):
     phone_number = models.CharField(max_length=15, blank=True, null=True, verbose_name="Номер телефона")
@@ -79,6 +80,7 @@ class Album(models.Model):
     def __str__(self):
         return self.name
 
+
 class Photo(models.Model):
     user = models.ForeignKey(
         User,
@@ -109,6 +111,7 @@ class Photo(models.Model):
     def __str__(self):
         return f"Фото {self.id} пользователя {self.user.username}"
 
+
 class PhotoLike(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='photo_likes')
     photo = models.ForeignKey(Photo, on_delete=models.CASCADE, related_name='likes')
@@ -119,4 +122,3 @@ class PhotoLike(models.Model):
 
     class Meta:
         unique_together = ('user', 'photo')  # Запрещаем ставить несколько лайков на одну фотографию
-

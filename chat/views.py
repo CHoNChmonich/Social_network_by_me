@@ -1,13 +1,14 @@
-from django.db.models import Q
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from .models import Chat, Message
 from users.models import User
 
+
 @login_required
 def chat_list_view(request):
     chats = request.user.chats.all().order_by('-updated_at')  # Сортировка по последнему обновлению
     return render(request, 'chat/chat_list.html', {'chats': chats})
+
 
 @login_required
 def chat_detail_view(request, chat_id):
@@ -20,6 +21,7 @@ def chat_detail_view(request, chat_id):
             chat.save()  # Обновление `updated_at`
         return redirect('chat:chat_detail', chat_id=chat.id)
     return render(request, 'chat/chat_detail.html', {'chat': chat, 'other_users': other_users})
+
 
 @login_required
 def create_chat_view(request):

@@ -1,5 +1,6 @@
-from django.utils.text import slugify
 import os
+
+from django.utils.text import slugify
 
 
 def get_avatar_upload_path(instance, filename):

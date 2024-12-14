@@ -1,17 +1,18 @@
 from django.contrib import auth
 from django.db.models import Count, Q
 from django.shortcuts import render
-from .models import Photo, Album, PhotoLike
-from .forms import PhotoUploadForm, RegistrationForm, UserEditForm, PhotoForm, AvatarUploadForm
 from django.shortcuts import get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from .models import FriendRequest, User
-from posts.models import PostLike
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login
 from django.contrib.auth.forms import AuthenticationForm
 from django.urls import reverse
 from django.db import models
 from django.contrib import messages
+
+from .models import Photo, PhotoLike
+from .models import FriendRequest, User
+from posts.models import PostLike
+from .forms import PhotoUploadForm, RegistrationForm, UserEditForm, PhotoForm, AvatarUploadForm
 
 
 def register(request):
@@ -27,11 +28,12 @@ def register(request):
         form = RegistrationForm()
     return render(request, 'users/register.html', {'form': form})
 
+
 def login_view(request):
     if request.method == 'POST':
-        form = AuthenticationForm(data = request.POST)
+        form = AuthenticationForm(data=request.POST)
         if form.is_valid():
-            user=form.get_user()
+            user = form.get_user()
             if user:
                 login(request, user)
                 return redirect('users:profile')
@@ -44,6 +46,7 @@ def login_view(request):
         'form': form,
     }
     return render(request, 'users/login.html', context)
+
 
 @login_required
 def logout_view(request):
@@ -64,10 +67,12 @@ def upload_photo(request):
         form = PhotoUploadForm()
     return render(request, 'photos/upload.html', {'form': form})
 
+
 @login_required
 def photo_gallery(request):
     photos = Photo.objects.filter(user=request.user)
     return render(request, 'photos/gallery.html', {'photos': photos})
+
 
 @login_required
 def profile(request):
@@ -114,6 +119,7 @@ def edit_profile_view(request):
     }
     return render(request, 'users/edit_profile.html', context)
 
+
 def another_user_profile(request, user_id):
     # Получаем пользователя по его id
     user = User.objects.get(id=user_id)
@@ -143,6 +149,7 @@ def another_user_profile(request, user_id):
 
     return render(request, 'users/another_user_profile.html', context)
 
+
 @login_required
 def friend_requests_view(request):
     incoming_requests = FriendRequest.objects.filter(to_user=request.user, is_accepted=False)
@@ -155,6 +162,7 @@ def friend_requests_view(request):
     }
     return render(request, 'users/friend_requests.html', context)
 
+
 @login_required
 def friend_list_view(request):
     user = request.user
@@ -164,6 +172,7 @@ def friend_list_view(request):
         'friends': friends,
     }
     return render(request, 'users/friend_list.html', context)
+
 
 @login_required
 def followers_list_view(request, user_id):
@@ -176,6 +185,7 @@ def followers_list_view(request, user_id):
     }
     return render(request, 'users/followers_list.html', context)
 
+
 @login_required
 def following_list_view(request, user_id):
     user = User.objects.get(id=user_id)
@@ -185,6 +195,7 @@ def following_list_view(request, user_id):
         'followings': followings,
     }
     return render(request, 'users/following_list.html', context)
+
 
 @login_required
 def send_friend_request(request, user_id):
@@ -215,11 +226,13 @@ def accept_friend_request(request, request_id):
     friend_request.save()
     return redirect('users:friend_requests')
 
+
 @login_required
 def decline_friend_request(request, request_id):
     friend_request = get_object_or_404(FriendRequest, id=request_id, to_user=request.user)
     friend_request.delete()
     return redirect('users:friend_requests')
+
 
 @login_required
 def remove_friend_view(request, friend_id):
@@ -233,6 +246,7 @@ def remove_friend_view(request, friend_id):
     ).delete()
 
     return redirect('users:friend_list')
+
 
 def friends_search_view(request):
     users = User.objects.annotate(
@@ -250,6 +264,7 @@ def friends_search_view(request):
     }
     return render(request, 'users/friends_search.html', context)
 
+
 @login_required
 def user_photos_view(request, user_id):
     user = get_object_or_404(User, id=user_id)
@@ -262,6 +277,7 @@ def user_photos_view(request, user_id):
         'photos': photos,
     }
     return render(request, 'users/user_photos.html', context)
+
 
 @login_required
 def set_avatar_view(request, photo_id):
@@ -278,6 +294,7 @@ def set_avatar_view(request, photo_id):
     photo.save()
 
     return redirect('users:profile')
+
 
 @login_required
 def upload_avatar_view(request):
@@ -299,6 +316,7 @@ def upload_avatar_view(request):
 
     return render(request, 'users/upload_avatar.html', {'form': form})
 
+
 @login_required
 def toggle_photo_like(request, photo_id):
     photo = get_object_or_404(Photo, id=photo_id)
@@ -311,6 +329,7 @@ def toggle_photo_like(request, photo_id):
         like.delete()
 
     return redirect('users:profile')  # Перенаправляем на страницу профиля или другую страницу
+
 
 @login_required
 def liked_items_view(request):
@@ -331,6 +350,3 @@ def liked_items_view(request):
         liked_items.append({'like': like, 'item_type': item_type})
 
     return render(request, 'users/liked_items.html', {'liked_items': liked_items})
-
-
-
